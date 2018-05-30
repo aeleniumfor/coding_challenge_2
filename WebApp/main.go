@@ -7,7 +7,7 @@ import (
 	"bytes"
 	"log"
 	"github.com/gorilla/mux"
-	"coding_challenge_2/WebApp/p_db"
+	"WebApp/p_db"
 )
 
 type Hello struct {
