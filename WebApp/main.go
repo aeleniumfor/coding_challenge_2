@@ -26,12 +26,12 @@ type Request struct {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/", handler)                                 //GET
-	r.HandleFunc("/users", users_handler).Methods("GET")       //GET
-	r.HandleFunc("/users/{id}", userid_handler).Methods("GET") //GET
-	r.HandleFunc("/users", usercreate_handler).Methods("POST") //POST
-	r.HandleFunc("/users/{id} ", handler)                      //PUT
-	r.HandleFunc("/users/{id} ", handler)                      //DELETE
+	r.HandleFunc("/", handler)                                     //GET
+	r.HandleFunc("/users", users_handler).Methods("GET")           //GET
+	r.HandleFunc("/users/{id}", userid_handler).Methods("GET")     //GET
+	r.HandleFunc("/users", usercreate_handler).Methods("POST")     //POST
+	r.HandleFunc("/users/{id} ", update_handler).Methods("PUT")   //PUT
+	r.HandleFunc("/users/{id} ", delete_handler).Methods("DELETE") //DELETE
 
 	http.Handle("/", r)
 	http.ListenAndServe(":8080", nil) //ポート8080で待機
@@ -39,6 +39,8 @@ func main() {
 
 //ハンドラ関数定義
 func handler(w http.ResponseWriter, r *http.Request) {
+	println(fmt.Sprintf("%s : %s", r.Method, r.URL))
+
 	//r.HandleFunc("/", handler)
 	msg := Hello{"Hello World!!"}
 	json_indet := new(bytes.Buffer)
@@ -54,7 +56,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func users_handler(w http.ResponseWriter, r *http.Request) {
-	//r.HandleFunc("/users", users_handler).Methods("GET") //GET
+	println(fmt.Sprintf("%s:%s", r.Method, r.URL))
 
 	member := p_db.DB_select()
 	json_indet := new(bytes.Buffer)
@@ -70,6 +72,7 @@ func users_handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func userid_handler(w http.ResponseWriter, r *http.Request) {
+	println(fmt.Sprintf("%s:%s", r.Method, r.URL))
 	//r.HandleFunc("/users/{id}", userid_handler).Methods("GET") //GET
 
 	parm := mux.Vars(r)["id"] //parmの取得
@@ -87,7 +90,7 @@ func userid_handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func usercreate_handler(w http.ResponseWriter, r *http.Request) {
-
+	println(fmt.Sprintf("%s:%s", r.Method, r.URL))
 	//encode post json data
 	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
@@ -115,7 +118,9 @@ func usercreate_handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func update_handler(w http.ResponseWriter, r *http.Request) {
-	//parm := mux.Vars(r)["id"] //get parm
+	println(fmt.Sprintf("%s:%s", r.Method, r.URL))
+
+	parm := mux.Vars(r)["id"] //get parm
 	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
 	var u Request
@@ -123,5 +128,37 @@ func update_handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	id := p_db.DB_update(parm, u.Name, u.Email)
+	p_db.DB_select_id(id)
 
+	member := p_db.DB_select_id(id)
+
+	json_indet := new(bytes.Buffer)
+	json_string, err := json.Marshal(&member)
+
+	if err != nil { //err
+		log.Fatal(err)
+	}
+
+	json.Indent(json_indet, json_string, "", "  ")     //jsonを整形
+	w.Header().Set("Content-Type", "application/json") //ヘッダ情報付加
+	fmt.Fprint(w, json_indet.String())
+}
+
+func delete_handler(w http.ResponseWriter, r *http.Request) {
+	println(fmt.Sprintf("%s:%s", r.Method, r.URL))
+
+	parm := mux.Vars(r)["id"] //get parm
+	p_db.DB_delete(parm)
+	member := p_db.DB_select_id(parm)
+
+	json_indet := new(bytes.Buffer)
+	json_string, err := json.Marshal(&member)
+
+	if err != nil { //err
+		log.Fatal(err)
+	}
+	json.Indent(json_indet, json_string, "", "  ")     //jsonを整形
+	w.Header().Set("Content-Type", "application/json") //ヘッダ情報付加
+	fmt.Fprint(w, json_indet.String())
 }
