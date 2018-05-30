@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+    webapp:
+      build: WebApp/.
+      restart: always
+      ports:
+        - 8080:8080
+
+
+    postgres:
+      build: PostgreSQL/.
+      restart: always
+      ports:
+        - 5432:5432
+      volumes:
+        - .data:/var/lib/postgresql/data
+      environment:
+        - POSTGRES_USER=root
+        - POSTGRES_PASSWORD=root
