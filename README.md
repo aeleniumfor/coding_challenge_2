@@ -3,6 +3,7 @@
 
 ## Description
 課題1のアプリケーションを拡張し、リレーショナルデータベースを用いて、 RESTful な Web Application を作成
+docker-compose.ymlではPostgreSQL,WebAppに入っているDokerfileをbuildする.
 
 ```
 coding_challenge_2
