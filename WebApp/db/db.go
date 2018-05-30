@@ -58,7 +58,7 @@ func DB_select_id(id string) []User {
 	db := DB_connect()
 	defer db.Close()
 
-	query := fmt.Sprintf("SELECT * FROM users WHERE %d", id)
+	query := fmt.Sprintf("SELECT * FROM users WHERE id = %s", id)
 	rows, err := db.Query(query)
 	checkErr(err)
 	users := User{}
@@ -82,5 +82,7 @@ func DB_insert() {
 }
 
 func main() {
-	DB_select_id("1")
+	DB_insert()
+	fmt.Println(DB_select())
+	fmt.Println(DB_select_id("2"))
 }
