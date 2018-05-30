@@ -1,12 +1,31 @@
+
+
+
 ## Description
 課題1のアプリケーションを拡張し、リレーショナルデータベースを用いて、 RESTful な Web Application を作成
 
+```
+coding_challenge_2
+    ├── docker-compose.yml
+    ├── PostgreSQL
+    │   ├── deploy.sql
+    │   └── Dockerfile
+    ├── README.md
+    └── WebApp
+        ├── Dockerfile
+        ├── main.go
+        └── p_db
+            ├── config.toml
+            └── p_db.go
+```
 ##URL
-http://localhost:8080/
-##### 使用したdocker image
+- http://localhost:8080/
+#### 使用したdocker image
+##### golang
 ```docker
 golang:latest
 ```
+##### postgresql
 ```docker
 postgres:latest
 ```
@@ -24,7 +43,7 @@ $ docker-compose up
 ```
 $ docker-compose up -d
 ```
-### confirmation
+## confirmation
 
 ##### ステータスコードの確認
 ```
