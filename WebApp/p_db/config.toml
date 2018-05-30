@@ -1,0 +1,6 @@
+[db]
+user="root"
+password= "root"
+host= "postgres"
+name= "webapp"
+sslmode= "disable"

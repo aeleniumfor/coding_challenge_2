@@ -1,14 +1,8 @@
 version: "3.3"
 services:
-    webapp:
-      build: WebApp/.
-      restart: always
-      ports:
-        - 8080:8080
-
-
     postgres:
       build: PostgreSQL/.
+      container_name: db
       restart: always
       ports:
         - 5432:5432
@@ -17,3 +11,18 @@ services:
       environment:
         - POSTGRES_USER=root
         - POSTGRES_PASSWORD=root
+        - DB_SSLMODE = disable
+
+    webapp:
+          build: WebApp/.
+          container_name: webapp
+          restart: always
+          ports:
+            - 8080:8080
+          depends_on:
+            - postgres
+          environment:
+            - POSTGRES_HOST = postgres
+            - POSTGRES_USER = root
+            - POSTGRES_PASSWORD = root
+            - DB_SSLMODE = disable
