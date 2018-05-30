@@ -1,4 +1,4 @@
-package main
+package p_db
 
 import (
 	"database/sql"
@@ -8,7 +8,7 @@ import (
 )
 
 type User struct {
-	ID        string    `json:"id"`
+	ID        int64     `json:"id"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
@@ -39,6 +39,7 @@ func DB_connect() *sql.DB {
 }
 
 func DB_select() []User {
+	// 全権検索
 	db := DB_connect()
 	defer db.Close()
 	rows, err := db.Query(`SELECT * FROM users`)
@@ -55,6 +56,7 @@ func DB_select() []User {
 }
 
 func DB_select_id(id string) []User {
+	// id検索
 	db := DB_connect()
 	defer db.Close()
 
@@ -72,17 +74,31 @@ func DB_select_id(id string) []User {
 	return member
 }
 
-func DB_insert() {
+func DB_insert() string {
+	// データベースへの挿入
 	db := DB_connect()
 	defer db.Close()
-	query, err := db.Prepare("INSERT INTO users(Name,Email) VALUES($1,$2)")
-	data, err := query.Exec("test1", "test1.gmail")
+	var last_id string
+	query := "INSERT INTO users(name,email) VALUES($1,$2) RETURNING id"
+	err := db.QueryRow(query, "test1", "test1.gmail").Scan(&last_id)
 	checkErr(err)
-	fmt.Println(data)
+	return last_id
 }
 
-func main() {
-	DB_insert()
-	fmt.Println(DB_select())
-	fmt.Println(DB_select_id("2"))
+func DB_update(id string, name string, email string) string {
+	db := DB_connect()
+	defer db.Close()
+	var update_id string
+	query := "UPDATE users SET name=$1,email=$2,updated_at=$3 WHERE id=$4 RETURNING id"
+	err := db.QueryRow(query, name, email, time.Now(), id).Scan(&update_id)
+	checkErr(err)
+	return update_id
+}
+
+func DB_delete(id string) {
+	db := DB_connect()
+	defer db.Close()
+	query := "DELETE FROM users WHERE id=$1"
+	_, err := db.Exec(query, id)
+	checkErr(err)
 }
