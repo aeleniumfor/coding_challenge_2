@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"bytes"
 	"log"
+	"github.com/gorilla/mux"
 )
 
 type Hello struct {
@@ -13,7 +14,14 @@ type Hello struct {
 }
 
 func main() {
-	http.HandleFunc("/", handler)
+	r := mux.NewRouter()
+	r.HandleFunc("/users", handler)       //GET
+	r.HandleFunc("/users", handler)       //GET
+	r.HandleFunc("/users/{id}", handler)  //GET
+	r.HandleFunc("/users ", handler)      //POST
+	r.HandleFunc("/users/{id} ", handler) //PUT
+	r.HandleFunc("/users/{id} ", handler) //DELETE
+
 	http.ListenAndServe(":8080", nil) //ポート8080で待機
 }
 
@@ -24,7 +32,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	json_indet := new(bytes.Buffer)
 	json_string, err := json.Marshal(&msg)
 
-	if err != nil {//エラー処理
+	if err != nil { //エラー処理
 		log.Fatal(err)
 	}
 

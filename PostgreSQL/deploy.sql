@@ -3,7 +3,7 @@ CREATE DATABASE webapp;
 \c webapp;
 
 CREATE TABLE users (
-  id         INTEGER,
+  id         SERIAL PRIMARY KEY,
   name       TEXT,
   email      TEXT,
   created_at TIMESTAMP,
