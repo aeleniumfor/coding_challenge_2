@@ -74,7 +74,7 @@ func DB_select_id(id string) []User {
 	return member
 }
 
-func DB_insert() string {
+func DB_insert(name string, email string) string {
 	// データベースへの挿入
 	db := DB_connect()
 	defer db.Close()
