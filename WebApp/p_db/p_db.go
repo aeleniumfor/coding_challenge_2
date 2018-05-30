@@ -15,13 +15,11 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-const (
-	DB_USER     = "root"
-	DB_PASSWORD = "root"
-	DB_HOST     = "150.95.134.161"
-	DB_NAME     = "webapp"
-	DB_SSLMODE  = "disable"
-)
+type Request struct {
+	DB_NAME           string `json:"name"`
+	POSTGRES_PASSWORD string `json:"email"`
+}
+
 
 func checkErr(err error) {
 	//エラーは全部これに集める
@@ -32,7 +30,7 @@ func checkErr(err error) {
 
 func DB_connect() *sql.DB {
 	//dbへのコネクション関数
-	conn := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s ", DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_SSLMODE)
+	conn := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s ", "root", "root", "postgres", "webapp", "disable")
 	db, err := sql.Open("postgres", conn)
 	checkErr(err)
 	return db
@@ -69,7 +67,9 @@ func DB_select_id(id string) []User {
 
 		rows.Scan(&users.ID, &users.Name, &users.Email, &users.CreatedAt, &users.UpdatedAt)
 		checkErr(err)
+
 		member = append(member, users)
+
 	}
 	return member
 }
