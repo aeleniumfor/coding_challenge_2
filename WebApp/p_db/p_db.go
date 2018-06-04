@@ -20,7 +20,6 @@ type Request struct {
 	POSTGRES_PASSWORD string `json:"email"`
 }
 
-
 func checkErr(err error) {
 	//エラーは全部これに集める
 	if err != nil {
@@ -80,7 +79,7 @@ func DB_insert(name string, email string) string {
 	defer db.Close()
 	var last_id string
 	query := "INSERT INTO users(name,email) VALUES($1,$2) RETURNING id"
-	err := db.QueryRow(query, "test1", "test1.gmail").Scan(&last_id)
+	err := db.QueryRow(query, name, email).Scan(&last_id)
 	checkErr(err)
 	return last_id
 }
